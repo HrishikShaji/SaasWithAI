@@ -1,6 +1,6 @@
 "use client";
 import Heading from "@/components/Heading";
-import { Code, MessageSquare } from "lucide-react";
+import { Code, ImageIcon, MessageSquare } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -58,11 +58,11 @@ const page = () => {
   return (
     <div>
       <Heading
-        title="Code Generation"
-        description="Generate code"
-        icon={Code}
-        iconColor="text-green-500"
-        bgColor="bg-green-500/10"
+        title="Image Generation"
+        description="Turn your prompt into an image"
+        icon={ImageIcon}
+        iconColor="text-pink-700"
+        bgColor="bg-pink-700/10"
       />
       <div className="px-4 lg:px-8">
         <div>
