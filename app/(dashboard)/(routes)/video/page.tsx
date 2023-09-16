@@ -1,6 +1,6 @@
 "use client";
 import Heading from "@/components/Heading";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Music, VideoIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -19,9 +19,7 @@ import BotAvatar from "@/components/BotAvatar";
 
 const page = () => {
   const router = useRouter();
-  const [messages, setMessages] = useState<
-    Array<{ role: string; content: string }>
-  >([]);
+  const [video, setVideo] = useState<string>();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,18 +32,9 @@ const page = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const userMessage = {
-        role: "user",
-        content: values.prompt,
-      };
-
-      const newMessages = [...messages, userMessage];
-
-      const response = await axios.post("/api/conversation", {
-        messages: newMessages,
-      });
-
-      setMessages((current) => [...current, userMessage, response.data]);
+      setVideo(undefined);
+      const response = await axios.post("/api/video", values);
+      setVideo(response.data[0]);
       form.reset();
     } catch (error: any) {
       console.log(error);
@@ -57,11 +46,11 @@ const page = () => {
   return (
     <div>
       <Heading
-        title="Conversation"
-        description="Our most advanced conversation model."
-        icon={MessageSquare}
-        iconColor="text-violet-500"
-        bgColor="bg-violet-500/10"
+        title="Video Generation"
+        description="Our most advanced Video model."
+        icon={VideoIcon}
+        iconColor="text-orange-500"
+        bgColor="bg-orange-500/10"
       />
       <div className="px-4 lg:px-8">
         <div>
@@ -77,7 +66,7 @@ const page = () => {
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={isloading}
-                        placeholder="How do i calculate radius of a circle"
+                        placeholder="Horses running in a field"
                         {...field}
                       />
                     </FormControl>
@@ -98,24 +87,14 @@ const page = () => {
               <Loader />
             </div>
           )}
-          {messages.length === 0 && !isloading && (
-            <Empty label="No conversation started" />
+          {!video && !isloading && <Empty label="No Video generated" />}
+          {video && (
+            <video
+              controls
+              className="w-full mt-8 aspect-video rounded-lg border bg-black">
+              <source src={video} />
+            </video>
           )}
-          <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.content}
-                className={cn(
-                  "p-8 w-full flex items-start gap-x-8 rounded-lg",
-                  message.role === "user"
-                    ? "bg-white border-black/10"
-                    : "bg-muted"
-                )}>
-                {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                <p className="text-sm">{message.content}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>
