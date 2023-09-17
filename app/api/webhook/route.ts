@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 
 export async function POST(req: Request) {
+  console.log("here");
   const body = await req.text();
   const signature = headers().get("Stripe-Signature") as string;
 
